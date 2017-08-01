@@ -2,24 +2,33 @@
 
 namespace app\controllers;
 
-use app\models\Building;
-use app\models\Elevator;
+use app\models\Tasks;
+use app\models\TasksSearch;
+use Yii;
 use yii\web\Controller;
 
 class SiteController extends Controller
 {
 
     /**
-     * Displays homepage.
-     *
-     * @return string
+     * Lists all Tasks models.
+     * @return mixed
      */
     public function actionIndex()
     {
-        $building = new Building(5,4);
-        $elevator = new Elevator($building, 0, 1);
-        var_dump($elevator->getFloorsArray());die;
-        return $this->render('index');
+        $model = new Tasks();
+        if ($model->load(Yii::$app->request->post()) && $model->save())
+        {
+            $model = new Tasks();
+        }
+        $searchModel = new TasksSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'model' => $model,
+        ]);
     }
 
     /**

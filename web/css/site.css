@@ -113,3 +113,11 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.clearfix:before,.clearfix:after {
+    content:" ";
+    display:table;
+}
+.clearfix:after {
+    clear:both;
+}

@@ -1,39 +1,38 @@
 <?php
 
+use yii\helpers\Html;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+
 /* @var $this yii\web\View */
+/* @var $searchModel app\models\TasksSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $model \app\models\Tasks */
 
-$this->title = 'My Yii Application';
+$this->title = 'Tasks';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-index">
+<div class="tasks-index">
 
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-6">
-                <h2>Building</h2>
+    <h1><?= Html::encode($this->title) ?></h1>
 
 
-                <?php for ($i = 5 ; $i > 0 ; $i--):?>
-                    <row>
-                        <h3>Floor #<?=$i?></h3>
-                        <div class="col-lg-6">
-                            <a href="/" class="text-danger"><span class="glyphicon glyphicon-circle-arrow-down" title="Down"></span></a>
-                            <a href="/" class="text-success"><span class="glyphicon glyphicon-circle-arrow-up" title="Up"></span></a>
-                        </div>
-                        <div class="col-lg-6">
-                            Peoples waiting: 0
-                        </div>
-                        <div class="col-lg-12">
-                            <hr>
-                        </div>
-                    </row>
-                <?php endfor;?>
+    <?= $this->render('_form',[
+        'model' => $model,
+    ]) ?>
 
-            </div>
-            <div class="col-lg-6">
-                <h2>Elevator</h2>
-            </div>
-        </div>
-
-    </div>
+    <div class="clearfix"></div>
+    <?php Pjax::begin(['id' => 'tasks']) ?>
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            'start_floor',
+            'end_floor',
+            'direction',
+            'status_id',
+        ],
+    ]); ?>
+    <?php Pjax::end() ?>
 </div>
