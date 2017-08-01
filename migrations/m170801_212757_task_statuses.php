@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m170730_122640_waiting_jobs extends Migration
+class m170801_212757_task_statuses extends Migration
 {
     public function up()
     {
@@ -12,18 +12,21 @@ class m170730_122640_waiting_jobs extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%waiting_jobs}}', [
+        $this->createTable('{{%task_statuses}}', [
             'id' => $this->primaryKey(),
-            'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
-            'floor' => $this->integer()->notNull(),
-            'direction' => $this->integer(),
-
+            'status' => $this->string(50)->notNull()->unique(),
         ], $tableOptions);
+
+        $this->batchInsert('task_statuses', ['status'], [
+            ['Waiting'],
+            ['In queue'],
+            ['Current'],
+            ['Done'],
+        ]);
     }
 
     public function down()
     {
-        $this->dropTable('{{%waiting_jobs}}');
+        $this->dropTable('{{%task_statuses}}');
     }
 }

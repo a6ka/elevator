@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m170730_111425_buildings extends Migration
+class m170801_212745_elevator_statuses extends Migration
 {
     public function up()
     {
@@ -12,21 +12,22 @@ class m170730_111425_buildings extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%buildings}}', [
+        $this->createTable('{{%elevator_statuses}}', [
             'id' => $this->primaryKey(),
-            'floors' => $this->integer()->notNull(),
-            'floor_height' => $this->integer()->notNull(),
+            'status' => $this->string(50)->notNull()->unique(),
         ], $tableOptions);
 
-        $this->insert('{{%buildings}}', [
-            'id' => 1,
-            'floors' => 5,
-            'floor_height' => 4,
+        $this->batchInsert('elevator_statuses', ['status'], [
+            ['Waiting'],
+            ['Move Up'],
+            ['Move Down'],
+            ['Loading'],
+            ['Stop'],
         ]);
     }
 
     public function down()
     {
-        $this->dropTable('{{%buildings}}');
+        $this->dropTable('{{%elevator_statuses}}');
     }
 }
