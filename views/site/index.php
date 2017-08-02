@@ -1,5 +1,7 @@
 <?php
 
+use app\models\TaskStatuses;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
@@ -26,12 +28,35 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'rowOptions' => function($model) {
+            switch ($model->status_id) {
+                case 2:
+                    return ['class' => 'warning'];
+                case 3:
+                    return ['class' => 'success'];
+                default:
+                    break;
+            }
+            return [];
+        },
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'start_floor',
             'end_floor',
-            'direction',
-            'status_id',
+            [
+                'attribute' => 'direction',
+                'content' => function ($data) {
+                    return $data->direction === 1 ? 'Down' : 'Up';
+                },
+                'filter' => [1 => 'Down', 2 => 'Up'],
+            ],
+            [
+                'attribute' => 'status_id',
+                'content' => function ($data) {
+                    return $data->status->status;
+                },
+                'filter' => ArrayHelper::map(TaskStatuses::find()->asArray()->all(), 'id', 'status'),
+            ],
         ],
     ]); ?>
     <?php Pjax::end() ?>

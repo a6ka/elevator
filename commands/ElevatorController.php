@@ -9,6 +9,7 @@ namespace app\commands;
 
 use app\models\Building;
 use app\models\Elevator;
+use app\models\Tasks;
 use yii\console\Controller;
 
 /**
@@ -21,16 +22,31 @@ use yii\console\Controller;
  */
 class ElevatorController extends Controller
 {
+//    public function actionIndex()
+//    {
+//        set_time_limit(0);
+//
+//        //init building and elevator
+//        $building = new Building(5,4);
+//        $elevator = new Elevator($building, 0, 1);
+//
+//        echo date('H:i:s', time())." - ". $elevator->getCurrentHeight() .PHP_EOL;
+//        $elevator->moveTo(2);
+//        echo date('H:i:s', time())." - ". $elevator->getCurrentHeight() .PHP_EOL;
+//    }
     public function actionIndex()
     {
+        //Бесконечное время выполнения скрипта
         set_time_limit(0);
 
-        //init building and elevator
+        //Создаем здание и лифт
         $building = new Building(5,4);
         $elevator = new Elevator($building, 0, 1);
 
-        echo date('H:i:s', time())." - ". $elevator->getCurrentHeight() .PHP_EOL;
-        $elevator->moveTo(2);
-        echo date('H:i:s', time())." - ". $elevator->getCurrentHeight() .PHP_EOL;
+        $tasks = Tasks::find()->where(['status_id' => 1])->all();
+        while(count($tasks))
+        {
+
+        }
     }
 }

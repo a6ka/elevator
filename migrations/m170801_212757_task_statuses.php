@@ -19,8 +19,7 @@ class m170801_212757_task_statuses extends Migration
 
         $this->batchInsert('task_statuses', ['status'], [
             ['Waiting'],
-            ['In queue'],
-            ['Current'],
+            ['In progress'],
             ['Done'],
         ]);
     }

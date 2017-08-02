@@ -16,6 +16,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $tasks = Tasks::find()->where(['status_id' => 1])->all();
         $model = new Tasks();
         if ($model->load(Yii::$app->request->post()) && $model->save())
         {

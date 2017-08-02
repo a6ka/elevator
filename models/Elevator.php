@@ -9,8 +9,9 @@ use yii\base\Model;
  *
  * @property integer $id
  * @property integer $currentHeight
- * @property string $status
+ * @property integer $status_id
  * @property integer $speed
+ * @property array $stopFloorsList
  *
  * @property Building $building
  */
@@ -18,9 +19,11 @@ class Elevator extends Model implements ElevatorInterface
 {
     public $id;
     private $currentHeight = 0;
-    private $status;
+    private $status_id;
     protected $speed; // m/s
+    public $currentDirection;
     private $building;
+    private $stopFloorsList;
 
 
     public function __construct(Building $building, int $startHeight, int $speed)
@@ -28,17 +31,13 @@ class Elevator extends Model implements ElevatorInterface
         $this->building = $building;
         $this->currentHeight = $startHeight;
         $this->speed = $speed;
-        $this->status = 'waiting';
+        $this->status_id = 1;
+        $this->stopFloorsList = [];
     }
 
     public function addCall($floor, $direction = null)
     {
-        $waitingJobs = new WaitingJobs();
-        $waitingJobs->floor = $floor;
-        $waitingJobs->direction = $direction;
-        $waitingJobs->save();
 
-        //TODO: запустить пересчет очереди лифта
     }
 
     public function addJob($neededFloor)
