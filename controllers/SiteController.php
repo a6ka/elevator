@@ -53,21 +53,27 @@ class SiteController extends Controller
         $building = new Building(5,4);
         $elevator = new Elevator($building, 1, 1);
 
-        $tasks = Tasks::find()->where(['status_id' => 1])->all();
-        while(count($tasks))
-        {
-            //get first task
-            $firstTask = $tasks[0];
+        do{
+            $tasks = Tasks::find()->where(['status_id' => 1])->all();
+            if(count($tasks)) {
+                //get first task
+                $firstTask = $tasks[0];
 
-            //update elevator direction
-            $elevator->addCall($firstTask->start_floor, $firstTask->direction);
+                //update elevator direction
+                $elevator->addCall($firstTask->start_floor, $firstTask->direction);
 
-            //move elevator to first task
-            $elevator->moveTo($firstTask->start_floor);
-            $elevator->loading();
+                //move elevator to first task
+               if($elevator->moveTo($firstTask->start_floor)) {
+                   //on/out persons
+                   $elevator->loading();
+               }
 
-            var_dump($elevator->attributes);die;
+
+                var_dump($elevator->getStopFloorsList());die;
+            }
         }
+        while(count($tasks));
+
         //Возвоащаем лифт в исходное состояние
         $elevator->currentDirection = null;
         $elevator->status_id = 1;

@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the Elevator model class.
@@ -32,6 +33,7 @@ class Elevator extends Model implements ElevatorInterface
 
     public function __construct(Building $building, int $startFloor, int $speed)
     {
+        parent::__construct();
         $this->building = $building;
         $this->currentHeight = $building->getFloorHeight($startFloor);
         $this->speed = $speed;
@@ -58,23 +60,9 @@ class Elevator extends Model implements ElevatorInterface
         $this->saveProperties();
     }
 
-    public function addJob($neededFloor)
+    public function pressButton($button)
     {
-        // TODO: Implement addJob() method.
-    }
-
-    /**
-     * @return int
-     */
-    public function getCurrentHeight(){
-        return $this->currentHeight;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStatus(){
-        return $this->status;
+        // TODO: Implement pressButton() method.
     }
 
     /**
@@ -103,13 +91,15 @@ class Elevator extends Model implements ElevatorInterface
                 }
             }
         }
+        $this->deleteFromStopFloorsList($floor);
         return true;
     }
 
     /**
      * @return bool
      */
-    public function loading(){
+    public function loading()
+    {
         //update elevator status
         $this->status_id = 4;
 
@@ -127,13 +117,34 @@ class Elevator extends Model implements ElevatorInterface
             $person->status_id = 2;
             $person->save();
             $this->persons_number++;
+            //add unique person destination to stopFloorsList
+            $this->addToStopFloorsList($person->end_floor);
         }
 
         $this->saveProperties();
-//        sleep(5);
+//        sleep(3);
         return true;
     }
 
+    /**
+     * @return int
+     */
+    public function getCurrentHeight(){
+        return $this->currentHeight;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus(){
+        return $this->status;
+    }
+
+    /**
+     * @param $attribute
+     * @param int $length
+     * @return string
+     */
     protected function generateUniqueRandomString($attribute, $length = 32) {
         $randomString = Yii::$app->getSecurity()->generateRandomString($length);
 
@@ -143,17 +154,49 @@ class Elevator extends Model implements ElevatorInterface
             return $this->generateUniqueRandomString($attribute, $length);
     }
 
+    /**
+     * @return array
+     */
     public function getStopFloorsList()
     {
         return $this->stopFloorsList;
     }
 
+    /**
+     * @return int|null
+     */
     public function getElevatorFloor()
     {
-        $floor = $this->currentHeight/$this->building->floorHeight +1;
+        $floor = $this->currentHeight/$this->building->floorHeight + 1;
         if(is_int($floor)) {
-            return $floor;
+            return (int) $floor;
         }
         return null;
+    }
+
+    /**
+     * @param int $floor
+     * @return bool
+     */
+    private function deleteFromStopFloorsList(int $floor)
+    {
+        if(($key = array_search($floor, $this->stopFloorsList)) !== false) {
+            unset($this->stopFloorsList[$key]);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param int $floor
+     * @return bool
+     */
+    private function addToStopFloorsList(int $floor)
+    {
+        if(!ArrayHelper::isIn($floor, $this->stopFloorsList)) {
+            array_push($this->stopFloorsList, $floor);
+            return true;
+        }
+        return false;
     }
 }

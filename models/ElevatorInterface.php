@@ -3,5 +3,5 @@ namespace app\models;
 
 interface ElevatorInterface {
     public function  addCall($floor, $direction = false);
-    public function  addJob($neededFloor);
+    public function  pressButton($button);
 }
