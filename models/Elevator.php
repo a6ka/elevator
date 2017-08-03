@@ -44,6 +44,10 @@ class Elevator extends Model implements ElevatorInterface
         $this->saveProperties();
     }
 
+    /**
+     * Save elevator properties to DB
+     * @return bool
+     */
     public function saveProperties()
     {
         if(!$model = ElevatorProperty::findOne(['elevator_name' => $this->elevator_name])) {
@@ -53,16 +57,34 @@ class Elevator extends Model implements ElevatorInterface
         return $model->save();
     }
 
+    /**
+     * Add new elevator call task
+     * @param $floor
+     * @param null $direction
+     * @return bool
+     */
     public function addCall($floor, $direction = null)
     {
         $this->stopFloorsList []= $floor;
         $this->currentDirection = $direction;
         $this->saveProperties();
+        return true;
     }
 
+    /**
+     * @param $button
+     * @return bool
+     */
     public function pressButton($button)
     {
-        // TODO: Implement pressButton() method.
+        //if press floor number
+        if(is_int($button)) {
+            //validate floor number (between 1 and max floor). If not - ignore the signal
+            if($button <= $this->building->floors && $button > 0) {
+                $this->addToStopFloorsList($button);
+            }
+        }
+        return true;
     }
 
     /**
@@ -118,9 +140,10 @@ class Elevator extends Model implements ElevatorInterface
             $person->save();
             $this->persons_number++;
             //add unique person destination to stopFloorsList
-            $this->addToStopFloorsList($person->end_floor);
+            $this->pressButton($person->end_floor);
         }
-
+        //sort stop floors
+        $this->sortStopFloorsList();
         $this->saveProperties();
 //        sleep(3);
         return true;
@@ -198,5 +221,17 @@ class Elevator extends Model implements ElevatorInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function sortStopFloorsList(){
+        if($this->currentDirection === 1) {
+            rsort($this->stopFloorsList,SORT_NUMERIC);
+        } else {
+            sort($this->stopFloorsList,SORT_NUMERIC);
+        }
+        return true;
     }
 }

@@ -74,12 +74,16 @@ class SiteController extends Controller
         }
         while(count($tasks));
 
-        //Возвоащаем лифт в исходное состояние
+        //return the elevator to its original state
         $elevator->currentDirection = null;
         $elevator->status_id = 1;
         $elevator->saveProperties();
     }
 
+    /**
+     * Reload Tasks table.
+     * @param $id
+     */
     public function actionLoadScenario($id)
     {
         Tasks::deleteAll();
