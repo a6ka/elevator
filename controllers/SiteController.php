@@ -18,7 +18,6 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $tasks = Tasks::find()->where(['status_id' => 1])->all();
         $model = new Tasks();
         if ($model->load(Yii::$app->request->post()))
         {
@@ -73,5 +72,32 @@ class SiteController extends Controller
         $elevator->currentDirection = null;
         $elevator->status_id = 1;
         $elevator->saveProperties();
+    }
+
+    public function actionLoadScenario($id)
+    {
+        Tasks::deleteAll();
+        switch ($id) {
+            case 1:
+                $taskList = [
+                    [1, 4, 2, 1],
+                    [3, 2, 1, 1],
+                    [4, 1, 1, 1],
+                ];
+                break;
+            case 2:
+                $taskList = [
+                    [1, 4, 0, 1],
+                    [3, 2, 0, 1],
+                    [4, 1, 0, 1],
+                ];
+                break;
+            default:
+                $taskList = [];
+                break;
+        }
+        Yii::$app->db->createCommand()->batchInsert('tasks', ['start_floor', 'end_floor', 'direction', 'status_id'], $taskList)->execute();
+
+        $this->redirect('index');
     }
 }

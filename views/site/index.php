@@ -18,6 +18,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <h3>Выбор сценария</h3>
+    <div class="btn-group">
+        <?= Html::a('Сценарий 1', ['load-scenario', 'id' => 1], ['class' => 'btn btn-default'])?>
+        <?= Html::a('Сценарий 2', ['load-scenario', 'id' => 2], ['class' => 'btn btn-default'])?>
+    </div>
+
 
     <?= $this->render('_form',[
         'model' => $model,

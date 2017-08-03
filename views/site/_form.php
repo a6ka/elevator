@@ -12,6 +12,7 @@ use yii\widgets\Pjax;
 <div class="tasks-form">
 
     <?php Pjax::begin(['id' => 'new_task']) ?>
+    <h3>Добавить задание</h3>
     <?php $form = ActiveForm::begin([
         'options' => ['data-pjax' => true],
         'id' => 'task-form',

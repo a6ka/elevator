@@ -43,10 +43,10 @@ class Tasks extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'start_floor' => 'Start Floor',
-            'end_floor' => 'End Floor',
+            'start_floor' => 'Start floor',
+            'end_floor' => 'End floor',
             'direction' => 'Direction',
-            'status_id' => 'Status ID',
+            'status_id' => 'Status',
         ];
     }
 
