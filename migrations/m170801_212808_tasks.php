@@ -16,7 +16,7 @@ class m170801_212808_tasks extends Migration
             'id' => $this->primaryKey(),
             'start_floor' => $this->integer()->notNull(),
             'end_floor' => $this->integer()->notNull(),
-            'direction' => $this->smallInteger(),
+            'direction' => $this->smallInteger()->notNull()->defaultValue(0),
             'status_id' => $this->integer()->notNull(),
         ], $tableOptions);
 

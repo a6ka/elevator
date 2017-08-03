@@ -7,10 +7,12 @@ namespace app\models;
  * This is the model class for table "elevator_property".
  *
  * @property integer $id
+ * @property string $elevator_name
  * @property double $currentHeight
  * @property double $speed
- * @property string $currentDirection
+ * @property integer $currentDirection
  * @property integer $status_id
+ * @property integer $persons_number
  *
  * @property ElevatorStatuses $status
  */
@@ -30,10 +32,11 @@ class ElevatorProperty extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['currentHeight', 'speed', 'status_id'], 'required'],
+            [['currentHeight', 'speed', 'status_id', 'elevator_name', 'persons_number'], 'required'],
             [['currentHeight', 'speed'], 'number'],
-            [['status_id'], 'integer'],
-            [['currentDirection'], 'string', 'max' => 4],
+            [['status_id', 'persons_number', 'currentDirection'], 'integer'],
+            [['elevator_name'], 'string'],
+            [['elevator_name'], 'unique'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => ElevatorStatuses::className(), 'targetAttribute' => ['status_id' => 'id']],
         ];
     }
@@ -45,10 +48,11 @@ class ElevatorProperty extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'currentHeight' => 'Current Height',
+            'elevator_name' => 'Elevator name',
+            'currentHeight' => 'Current height',
             'speed' => 'Speed',
-            'currentDirection' => 'Current Direction',
-            'status_id' => 'Status ID',
+            'currentDirection' => 'Current direction',
+            'status_id' => 'Status',
         ];
     }
 

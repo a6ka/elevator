@@ -41,11 +41,13 @@ class ElevatorController extends Controller
 
         //Создаем здание и лифт
         $building = new Building(5,4);
-        $elevator = new Elevator($building, 0, 1);
+        $elevator = new Elevator($building, 1, 1);
 
         $tasks = Tasks::find()->where(['status_id' => 1])->all();
         while(count($tasks))
         {
+            //get first task
+            $firstTask = $tasks[0];
 
         }
     }

@@ -12,8 +12,8 @@ use yii\base\Model;
 
 class Building extends Model
 {
-    private $floors;
-    private $floorHeight;
+    public $floors;
+    public $floorHeight;
 
     /**
      * Building constructor.

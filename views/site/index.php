@@ -46,9 +46,9 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'direction',
                 'content' => function ($data) {
-                    return $data->direction === 1 ? 'Down' : 'Up';
+                    return $data->direction === 1 ? 'Down' : ($data->direction === 2 ? 'Up' : 'Unknown');
                 },
-                'filter' => [1 => 'Down', 2 => 'Up'],
+                'filter' => [0 => 'Unknown', 1 => 'Down', 2 => 'Up'],
             ],
             [
                 'attribute' => 'status_id',

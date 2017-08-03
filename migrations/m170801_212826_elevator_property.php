@@ -14,9 +14,11 @@ class m170801_212826_elevator_property extends Migration
 
         $this->createTable('{{%elevator_property}}', [
             'id' => $this->primaryKey(),
+            'elevator_name' => $this->string()->unique(),
             'currentHeight' => $this->float()->notNull(),
             'speed' => $this->float()->notNull(),
-            'currentDirection' => $this->string(4),
+            'currentDirection' => $this->integer(),
+            'persons_number' => $this->integer()->notNull(),
             'status_id' => $this->integer()->notNull(),
         ], $tableOptions);
 
