@@ -11,6 +11,7 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\TasksSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $model \app\models\Tasks */
+/* @var $stop_button \app\models\ExtraEvents */
 
 $this->title = 'Tasks';
 $this->params['breadcrumbs'][] = $this->title;
@@ -26,13 +27,19 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Спец. кнопки', ['load-scenario', 'id' => 3], ['class' => 'btn btn-default'])?>
         <?= Html::a('Учет веса', ['load-scenario', 'id' => 4], ['class' => 'btn btn-default'])?>
         <?= Html::a('VIP таски', ['load-scenario', 'id' => 5], ['class' => 'btn btn-default'])?>
-
     </div>
 
 
     <?= $this->render('_form',[
         'model' => $model,
     ]) ?>
+
+    <div class="clearfix"></div>
+
+    <h3>Экстра кнопки</h3>
+    <div class="btn-group mb-30">
+        <?= Html::a($stop_button->value ? 'CANCEL STOP' : 'STOP!', ['index', 'stop_button' => ($stop_button->value ? 0 : 1)], ['class' => $stop_button->value ? 'btn btn-success' : 'btn btn-danger'])?>
+    </div>
 
     <div class="clearfix"></div>
     <?php Pjax::begin(['id' => 'tasks']) ?>

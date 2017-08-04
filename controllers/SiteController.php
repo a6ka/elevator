@@ -2,9 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\ExtraEvents;
 use app\models\Tasks;
 use app\models\TasksSearch;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 
 class SiteController extends Controller
@@ -19,19 +21,22 @@ class SiteController extends Controller
         $model = new Tasks();
         if ($model->load(Yii::$app->request->post()))
         {
-            if(!$model->direction) {
-                $model->direction = 0;
-            }
             $model->save();
             $model = new Tasks();
         }
         $searchModel = new TasksSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $stopButton = ExtraEvents::findOne(['event' => 'stop_button']);
+        if(array_key_exists('stop_button', Yii::$app->request->queryParams)) {
+            $stopButton->value = ArrayHelper::getValue(Yii::$app->request->queryParams, 'stop_button');
+            $stopButton->save();
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'model' => $model,
+            'stop_button' => $stopButton,
         ]);
     }
 

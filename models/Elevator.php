@@ -52,12 +52,21 @@ class Elevator extends Model implements ElevatorInterface
     }
 
     /**
+     * Finds the ElevatorProperty based on its name value.
+     * @return null | ElevatorProperty the loaded model
+     */
+    protected function findProperties()
+    {
+        return ElevatorProperty::findOne(['elevator_name' => $this->elevator_name]);
+    }
+
+    /**
      * Save elevator properties to DB
      * @return bool
      */
     public function saveProperties()
     {
-        if(!$model = ElevatorProperty::findOne(['elevator_name' => $this->elevator_name])) {
+        if(!$model = $this->findProperties()) {
             $model = new ElevatorProperty();
         }
         $model->attributes = $this->attributes;
@@ -150,9 +159,27 @@ class Elevator extends Model implements ElevatorInterface
 
         if((int) $this->currentHeight !== (int) $endHeight) {
             $startHeight = $this->currentHeight;
+            //save current elevator status
+            $currentStatus = $this->status_id;
             //move up
             if($this->status_id === 2) {
                 while ((int)$this->currentHeight !== (int)$endHeight) {
+                    //STOP button
+                    if(ExtraEvents::findOne(['event' => 'stop_button'])->value) {
+                        echo "СТОП!".PHP_EOL;
+                        $this->status_id = 5;
+                        $this->saveProperties();
+                    }
+                    while (ExtraEvents::findOne(['event' => 'stop_button'])->value) {
+                        sleep(.3);
+                        $startTime = microtime(true);
+                    }
+                    if($this->status_id === 5) {
+                        echo "ПОЕХАЛИ!".PHP_EOL;
+                        $this->status_id = $currentStatus;
+                        $this->saveProperties();
+                    }
+
                     $prevHeight = (int) $this->currentHeight;
                     $this->currentHeight = $startHeight + floor((microtime(true)-$startTime)*$this->speed);
                     if( $prevHeight !== (int) $this->currentHeight) {
@@ -180,6 +207,22 @@ class Elevator extends Model implements ElevatorInterface
             //move down
             } else {
                 while ((int)$this->currentHeight !== (int)$endHeight) {
+                    //STOP button
+                    if(ExtraEvents::findOne(['event' => 'stop_button'])->value) {
+                        echo "СТОП!".PHP_EOL;
+                        $this->status_id = 5;
+                        $this->saveProperties();
+                    }
+                    while (ExtraEvents::findOne(['event' => 'stop_button'])->value) {
+                        sleep(.3);
+                        $startTime = microtime(true);
+                    }
+                    if($this->status_id === 5) {
+                        echo "ПОЕХАЛИ!".PHP_EOL;
+                        $this->status_id = $currentStatus;
+                        $this->saveProperties();
+                    }
+
                     $prevHeight = $this->currentHeight;
                     $this->currentHeight = $startHeight - floor((microtime(true)-$startTime)*$this->speed);
                     if((int) $prevHeight !== (int) $this->currentHeight) {
@@ -263,7 +306,7 @@ class Elevator extends Model implements ElevatorInterface
         //sort stop floors
         $this->sortStopFloorsList();
         $this->saveProperties();
-//        sleep(3);
+        sleep(3);
         echo "Закрыл двери".PHP_EOL;
         return true;
     }

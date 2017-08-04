@@ -44,7 +44,7 @@ class Tasks extends \yii\db\ActiveRecord
             [['direction', 'status_id', 'weight', 'vip'], 'integer'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => TaskStatuses::className(), 'targetAttribute' => ['status_id' => 'id']],
             [['start_floor', 'end_floor'], 'in', 'range' => $floors],
-            [['vip'], 'default', 'value' => 0],
+            [['vip', 'direction'], 'default', 'value' => 0],
         ];
     }
 
