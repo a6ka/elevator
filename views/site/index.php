@@ -20,10 +20,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h3>Выбор сценария</h3>
     <div class="btn-group">
-        <?= Html::a('Сценарий 1', ['load-scenario', 'id' => 1], ['class' => 'btn btn-default'])?>
-        <?= Html::a('Сценарий 2', ['load-scenario', 'id' => 2], ['class' => 'btn btn-default'])?>
-        <?= Html::a('Сценарий 3', ['load-scenario', 'id' => 3], ['class' => 'btn btn-default'])?>
-        <?= Html::a('Сценарий 4', ['load-scenario', 'id' => 4], ['class' => 'btn btn-default'])?>
+        <?= Html::a('Базовые условия', ['load-scenario', 'id' => 1], ['class' => 'btn btn-default'])?>
+        <?= Html::a('Без направлений', ['load-scenario', 'id' => 2], ['class' => 'btn btn-default'])?>
+        <?= Html::a('Спец. кнопки', ['load-scenario', 'id' => 3], ['class' => 'btn btn-default'])?>
+        <?= Html::a('Учет веса', ['load-scenario', 'id' => 4], ['class' => 'btn btn-default'])?>
+        <?= Html::a('VIP таски', ['load-scenario', 'id' => 5], ['class' => 'btn btn-default'])?>
+
     </div>
 
 

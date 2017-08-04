@@ -47,6 +47,10 @@ $endFloorList = ArrayHelper::merge($startFloorList, ['-100' => 'Первых э�
         <?= $form->field($model, 'weight')->textInput(['value' => 70]) ?>
     </div>
 
+    <div class="form-group col-md-2 col-sm-6 col-xs-12">
+        <?= $form->field($model, 'vip')->checkbox(['value' => 1]) ?>
+    </div>
+
     <?= $form->field($model, 'status_id')->hiddenInput(['value' => 1])->label(false) ?>
 
     <div class="form-group col-md-2 col-sm-6 col-xs-12">

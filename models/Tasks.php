@@ -13,6 +13,7 @@ use Yii;
  * @property integer $direction
  * @property integer $status_id
  * @property integer $weight
+ * @property integer $vip
  *
  * @property TaskStatuses $status
  */
@@ -40,9 +41,10 @@ class Tasks extends \yii\db\ActiveRecord
 
         return [
             [['start_floor', 'end_floor', 'status_id', 'weight'], 'required'],
-            [['direction', 'status_id', 'weight'], 'integer'],
+            [['direction', 'status_id', 'weight', 'vip'], 'integer'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => TaskStatuses::className(), 'targetAttribute' => ['status_id' => 'id']],
             [['start_floor', 'end_floor'], 'in', 'range' => $floors],
+            [['vip'], 'default', 'value' => 0],
         ];
     }
 
@@ -58,6 +60,7 @@ class Tasks extends \yii\db\ActiveRecord
             'direction' => 'Direction',
             'status_id' => 'Status',
             'weight' => 'Weight',
+            'vip' => 'VIP',
         ];
     }
 

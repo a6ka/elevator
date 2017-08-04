@@ -19,6 +19,7 @@ class m170801_212808_tasks extends Migration
             'direction' => $this->smallInteger()->notNull()->defaultValue(0),
             'status_id' => $this->integer()->notNull(),
             'weight' => $this->integer()->notNull(),
+            'vip' => $this->integer()->notNull(),
         ], $tableOptions);
 
         $this->createIndex('status_id', 'tasks', 'status_id');
