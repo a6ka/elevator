@@ -35,6 +35,10 @@ use yii\widgets\Pjax;
         <?= $form->field($model, 'direction')->dropDownList(['1' => 'Down', '2' => 'Up'], ['prompt'=>'Select direction...']) ?>
     </div>
 
+    <div class="form-group col-md-2 col-sm-6 col-xs-12">
+        <?= $form->field($model, 'weight')->textInput(['value' => 70]) ?>
+    </div>
+
     <?= $form->field($model, 'status_id')->hiddenInput(['value' => 1])->label(false) ?>
 
     <div class="form-group col-md-2 col-sm-6 col-xs-12">

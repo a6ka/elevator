@@ -11,6 +11,7 @@ namespace app\models;
  * @property integer $end_floor
  * @property integer $direction
  * @property integer $status_id
+ * @property integer $weight
  *
  * @property TaskStatuses $status
  */
@@ -30,8 +31,8 @@ class Tasks extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['start_floor', 'end_floor', 'status_id'], 'required'],
-            [['start_floor', 'end_floor', 'direction', 'status_id'], 'integer'],
+            [['start_floor', 'end_floor', 'status_id', 'weight'], 'required'],
+            [['start_floor', 'end_floor', 'direction', 'status_id', 'weight'], 'integer'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => TaskStatuses::className(), 'targetAttribute' => ['status_id' => 'id']],
         ];
     }
@@ -47,6 +48,7 @@ class Tasks extends \yii\db\ActiveRecord
             'end_floor' => 'End floor',
             'direction' => 'Direction',
             'status_id' => 'Status',
+            'weight' => 'Weight',
         ];
     }
 

@@ -103,23 +103,39 @@ class SiteController extends Controller
         switch ($id) {
             case 1:
                 $taskList = [
-                    [1, 4, 2, 1],
-                    [3, 2, 1, 1],
-                    [4, 1, 1, 1],
+                    [1, 4, 2, 1, 70],
+                    [3, 2, 1, 1, 70],
+                    [4, 1, 1, 1, 70],
                 ];
                 break;
             case 2:
                 $taskList = [
-                    [1, 4, 0, 1],
-                    [3, 2, 0, 1],
-                    [4, 1, 0, 1],
+                    [1, 4, 0, 1, 70],
+                    [3, 2, 0, 1, 70],
+                    [4, 1, 0, 1, 70],
+                ];
+                break;
+            case 3:
+                $taskList = [
+                    [1, 4, 0, 1, 70],
+                    [1, 2, 0, 1, 80],
+                    [2, 4, 0, 1, 110],
+                    [3, 1, 0, 1, 70],
+                    [4, 3, 0, 1, 65],
+                    [2, 3, 0, 1, 54],
+                    [1, 3, 0, 1, 92],
+                    [1, 4, 0, 1, 122],
+                    [4, 1, 0, 1, 89],
+                    [3, 1, 0, 1, 56],
+                    [2, 1, 0, 1, 70],
+                    [2, 4, 0, 1, 90],
                 ];
                 break;
             default:
                 $taskList = [];
                 break;
         }
-        Yii::$app->db->createCommand()->batchInsert('tasks', ['start_floor', 'end_floor', 'direction', 'status_id'], $taskList)->execute();
+        Yii::$app->db->createCommand()->batchInsert('tasks', ['start_floor', 'end_floor', 'direction', 'status_id', 'weight'], $taskList)->execute();
 
         $this->redirect('index');
     }

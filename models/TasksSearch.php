@@ -16,7 +16,7 @@ class TasksSearch extends Tasks
     public function rules()
     {
         return [
-            [['id', 'start_floor', 'end_floor', 'direction', 'status_id'], 'integer'],
+            [['id', 'start_floor', 'end_floor', 'direction', 'status_id', 'weight'], 'integer'],
         ];
     }
 
@@ -61,6 +61,7 @@ class TasksSearch extends Tasks
             'end_floor' => $this->end_floor,
             'direction' => $this->direction,
             'status_id' => $this->status_id,
+            'weight' => $this->weight,
         ]);
 
         $query->orderBy('id');

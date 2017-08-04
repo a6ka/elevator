@@ -15,6 +15,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $status_id
  * @property integer $speed
  * @property integer $maxWeight
+ * @property integer $currentWeight
  * @property integer $persons_number
  * @property array $stopFloorsList
  * @property array $reverseStopFloorsList
@@ -30,6 +31,7 @@ class Elevator extends Model implements ElevatorInterface
     public $currentDirection;
     public $persons_number = 0;
     public $maxWeight = 0;
+    public $currentWeight = 0;
 
     private $building;
     private $stopFloorsList = [];
@@ -134,8 +136,16 @@ class Elevator extends Model implements ElevatorInterface
                     if( $prevHeight !== (int) $this->currentHeight) {
                         if($currentFloor = $this->getElevatorFloor()) {
                             echo "Проезжаю ".$currentFloor." этаж".PHP_EOL;
-                            $tasks = Tasks::find()->where(['status_id' => 1, 'start_floor' => $currentFloor])->all();
-                            if(count($tasks)) {
+                            $newTasks = Tasks::find()->where([
+                                'status_id' => 1,
+                                'start_floor' => $currentFloor,
+                                'direction' => [0, $this->currentDirection],
+                            ])->all();
+                            $currentOutTasks = Tasks::find()->where([
+                                'status_id' => 2,
+                                'end_floor' => $currentFloor,
+                            ])->all();
+                            if(count($newTasks) && ($this->currentWeight < $this->maxWeight || count($currentOutTasks))) {
                                 echo "На этаже обнаружена жизнь! Подбираю!".PHP_EOL;
                                 break;
                             }
@@ -151,8 +161,16 @@ class Elevator extends Model implements ElevatorInterface
                     if((int) $prevHeight !== (int) $this->currentHeight) {
                         if($currentFloor = $this->getElevatorFloor()) {
                             echo "Проезжаю ".$currentFloor." этаж".PHP_EOL;
-                            $tasks = Tasks::find()->where(['status_id' => 1, 'start_floor' => $currentFloor])->all();
-                            if(count($tasks)) {
+                            $newTasks = Tasks::find()->where([
+                                'status_id' => 1,
+                                'start_floor' => $currentFloor,
+                                'direction' => [0, $this->currentDirection],
+                            ])->all();
+                            $currentOutTasks = Tasks::find()->where([
+                                'status_id' => 2,
+                                'end_floor' => $currentFloor,
+                            ])->all();
+                            if(count($newTasks) && ($this->currentWeight < $this->maxWeight || count($currentOutTasks))) {
                                 echo "На этаже обнаружена жизнь! Подбираю!".PHP_EOL;
                                 break;
                             }
@@ -185,18 +203,25 @@ class Elevator extends Model implements ElevatorInterface
             $personOut->status_id = 3;
             $personOut->save();
             $this->persons_number--;
+            $this->currentWeight -= $personOut->weight;
             echo "Высаживаю пассажира. Количество людей в лифте: ".$this->persons_number.PHP_EOL;
         }
 
         //persons IN
         $personsIn = Tasks::find()->where(['status_id' => 1,'start_floor' => $this->getElevatorFloor()])->all();
         foreach ($personsIn as $personIn) {
-            $personIn->status_id = 2;
-            $personIn->save();
-            $this->persons_number++;
-            echo "Новый пассажир. Количество людей в лифте: ".$this->persons_number.PHP_EOL;
-            //add unique person destination to stopFloorsList
-            $this->pressButton($personIn->end_floor);
+            if(($this->currentWeight + $personIn->weight) <= $this->maxWeight){
+                $personIn->status_id = 2;
+                $personIn->save();
+                $this->persons_number++;
+                $this->currentWeight += $personIn->weight;
+                echo "Новый пассажир. Количество людей в лифте: ".$this->persons_number.PHP_EOL;
+                //add unique person destination to stopFloorsList
+                $this->pressButton($personIn->end_floor);
+            } else {
+                echo "Пассажир слишком пухлый. Подождет следующего раза }:-D".PHP_EOL;
+            }
+
         }
         //sort stop floors
         $this->sortStopFloorsList();

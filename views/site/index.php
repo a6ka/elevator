@@ -22,6 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="btn-group">
         <?= Html::a('Сценарий 1', ['load-scenario', 'id' => 1], ['class' => 'btn btn-default'])?>
         <?= Html::a('Сценарий 2', ['load-scenario', 'id' => 2], ['class' => 'btn btn-default'])?>
+        <?= Html::a('Сценарий 3', ['load-scenario', 'id' => 3], ['class' => 'btn btn-default'])?>
     </div>
 
 
@@ -56,6 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => [0 => 'Unknown', 1 => 'Down', 2 => 'Up'],
             ],
+            'weight',
             [
                 'attribute' => 'status_id',
                 'content' => function ($data) {
