@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Спец. кнопки', ['load-scenario', 'id' => 3], ['class' => 'btn btn-default'])?>
         <?= Html::a('Учет веса', ['load-scenario', 'id' => 4], ['class' => 'btn btn-default'])?>
         <?= Html::a('VIP таски', ['load-scenario', 'id' => 5], ['class' => 'btn btn-default'])?>
+        <?= Html::button('10 этажей', ['class' => 'btn btn-default', 'data-toggle' => 'modal', 'data-target' => '#myModal'])?>
     </div>
 
 
@@ -101,4 +102,26 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
     <?php Pjax::end() ?>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Внимание!</h4>
+            </div>
+            <div class="modal-body">
+                <p>Прежде чем загрузить данный сценарий отредактируйте параметры здания в файле <strong>config/params.php</strong></p>
+            </div>
+            <div class="modal-footer">
+                <p>Вы уже изменили параметры?</p>
+                <button type="button" class="btn btn-link" data-dismiss="modal">Нет</button>
+                <?= Html::a('Да', ['load-scenario', 'id' => 6], ['class' => 'btn btn-success'])?>
+            </div>
+        </div>
+
+    </div>
 </div>
