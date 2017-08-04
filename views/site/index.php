@@ -114,7 +114,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <h4 class="modal-title">Внимание!</h4>
             </div>
             <div class="modal-body">
-                <p>Прежде чем загрузить данный сценарий отредактируйте параметры здания в файле <strong>config/params.php</strong></p>
+                <p>Прежде чем загрузить данный сценарий отредактируйте параметры здания в файле <code>config/params.php</code></p>
             </div>
             <div class="modal-footer">
                 <p>Вы уже изменили параметры?</p>
