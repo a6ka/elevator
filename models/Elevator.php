@@ -82,27 +82,36 @@ class Elevator extends Model implements ElevatorInterface
     }
 
     /**
-     * @param $button
+     * @param int $button
      * @return bool
      */
-    public function pressButton($button)
+    public function pressButton(int $button)
     {
         echo "В кабине нажата кнопка: ".$button.PHP_EOL;
-        //if press floor number
-        if(is_int($button)) {
-            //validate floor number (between 1 and max floor). If not - ignore the signal
-            if($button <= $this->building->floors && $button > 0) {
-                $neededDirection = 1; //Down
-                if($button > $this->getElevatorFloor()) {
-                    $neededDirection = 2; //Up
-                }
-                if($this->currentDirection === $neededDirection) {
-                    $this->addToStopFloorsList($button);
-                } else {
-                    $this->addToReverseStopFloorsList($button);
-                }
+        //if press service button
+        switch ($button) {
+            case -100:
+                $button = 1;
+                break;
+            case -110:
+                $button = $this->building->floors;
+                break;
+            default:
+                break;
+        }
 
+        //validate floor number (between 1 and max floor). If not - ignore the signal
+        if($button <= $this->building->floors && $button > 0) {
+            $neededDirection = 1; //Down
+            if($button > $this->getElevatorFloor()) {
+                $neededDirection = 2; //Up
             }
+            if($this->currentDirection === $neededDirection) {
+                $this->addToStopFloorsList($button);
+            } else {
+                $this->addToReverseStopFloorsList($button);
+            }
+
         }
         return true;
     }
@@ -212,6 +221,16 @@ class Elevator extends Model implements ElevatorInterface
         foreach ($personsIn as $personIn) {
             if(($this->currentWeight + $personIn->weight) <= $this->maxWeight){
                 $personIn->status_id = 2;
+                switch ($personIn->end_floor) {
+                    case -100:
+                        $personIn->end_floor = 1;
+                        break;
+                    case -110:
+                        $personIn->end_floor = $this->building->floors;
+                        break;
+                    default:
+                        break;
+                }
                 $personIn->save();
                 $this->persons_number++;
                 $this->currentWeight += $personIn->weight;

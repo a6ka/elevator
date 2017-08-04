@@ -2,8 +2,6 @@
 
 namespace app\controllers;
 
-use app\models\Building;
-use app\models\Elevator;
 use app\models\Tasks;
 use app\models\TasksSearch;
 use Yii;
@@ -47,52 +45,6 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
-    public function actionTest()
-    {
-        set_time_limit(0);
-
-        echo "Запуск скрипта..."."<br/>";
-        $building = new Building(5,4);
-        echo "Дом инициализирован..."."<br/>";
-        $elevator = new Elevator($building, 1, 1);
-        echo "Лифт инициализирован..."."<br/>";
-        echo "Загружаю задания..."."<br/>";
-        echo "--------------------"."<br/>";
-
-        do{
-            $tasks = Tasks::find()->where(['status_id' => 1])->all();
-            echo "Количество людей в ожидании: ".count($tasks)."<br/>";
-            if(count($tasks)) {
-                //get first task
-                $firstTask = $tasks[0];
-
-                //update elevator direction
-                $elevator->addCall($firstTask->start_floor, $firstTask->direction);
-
-                //move elevator to first task
-                if($elevator->moveTo($firstTask->start_floor)) {
-                    //on/out persons
-                    $elevator->loading();
-                }
-
-                while (count($elevator->getStopFloorsList())) {
-                    $list = $elevator->getStopFloorsList();
-                    $floor = $list[0];
-                    if($elevator->moveTo($floor)) {
-                        //on/out persons
-                        $elevator->loading();
-                    }
-                }
-            }
-        }
-        while(count($tasks));
-
-        //return the elevator to its original state
-        $elevator->currentDirection = null;
-        $elevator->status_id = 1;
-        $elevator->saveProperties();
-    }
-
     /**
      * Reload Tasks table.
      * @param $id
@@ -129,6 +81,13 @@ class SiteController extends Controller
                     [3, 1, 0, 1, 56],
                     [2, 1, 0, 1, 70],
                     [2, 4, 0, 1, 90],
+                ];
+                break;
+            case 4:
+                $taskList = [
+                    [1, -110, 0, 1, 70],
+                    [3, 2, 0, 1, 70],
+                    [4, -100, 0, 1, 70],
                 ];
                 break;
             default:

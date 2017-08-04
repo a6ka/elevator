@@ -10,6 +10,7 @@ namespace app\commands;
 use app\models\Building;
 use app\models\Elevator;
 use app\models\Tasks;
+use Yii;
 use yii\console\Controller;
 
 /**
@@ -31,9 +32,9 @@ class ElevatorController extends Controller
         set_time_limit(0);
 
         echo "Запуск скрипта...".PHP_EOL;
-        $building = new Building(5,4);
+        $building = new Building(Yii::$app->params['building']['floors'], Yii::$app->params['building']['floorHeight']);
         echo "Дом инициализирован...".PHP_EOL;
-        $elevator = new Elevator($building, 1, 1, 700);
+        $elevator = new Elevator($building, Yii::$app->params['elevator']['startFloor'], Yii::$app->params['elevator']['speed'], Yii::$app->params['elevator']['maxWeight']);
         echo "Лифт инициализирован...".PHP_EOL;
         echo "Загружаю задания...".PHP_EOL;
         echo "--------------------".PHP_EOL;

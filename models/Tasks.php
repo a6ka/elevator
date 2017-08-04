@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 
 /**
  * This is the model class for table "tasks".
@@ -30,10 +31,18 @@ class Tasks extends \yii\db\ActiveRecord
      */
     public function rules()
     {
+        $floors = [];
+        for ($i = 1; $i <= Yii::$app->params['building']['floors'] ; $i++) {
+            $floors[] = $i;
+        }
+        $floors []= -100; //First floor
+        $floors []= -110; //Last floor
+
         return [
             [['start_floor', 'end_floor', 'status_id', 'weight'], 'required'],
-            [['start_floor', 'end_floor', 'direction', 'status_id', 'weight'], 'integer'],
+            [['direction', 'status_id', 'weight'], 'integer'],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => TaskStatuses::className(), 'targetAttribute' => ['status_id' => 'id']],
+            [['start_floor', 'end_floor'], 'in', 'range' => $floors],
         ];
     }
 

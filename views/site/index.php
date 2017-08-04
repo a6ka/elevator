@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Сценарий 1', ['load-scenario', 'id' => 1], ['class' => 'btn btn-default'])?>
         <?= Html::a('Сценарий 2', ['load-scenario', 'id' => 2], ['class' => 'btn btn-default'])?>
         <?= Html::a('Сценарий 3', ['load-scenario', 'id' => 3], ['class' => 'btn btn-default'])?>
+        <?= Html::a('Сценарий 4', ['load-scenario', 'id' => 4], ['class' => 'btn btn-default'])?>
     </div>
 
 
@@ -49,7 +50,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'start_floor',
-            'end_floor',
+            [
+                'attribute' => 'end_floor',
+                'content' => function ($data) {
+                    switch ($data->end_floor) {
+                        case -100:
+                            return 'Первый этаж';
+                        case -110:
+                            return 'Последний этаж';
+                        default:
+                            return $data->end_floor;
+                    }
+                },
+                'filter' => [0 => 'Unknown', 1 => 'Down', 2 => 'Up'],
+            ],
             [
                 'attribute' => 'direction',
                 'content' => function ($data) {

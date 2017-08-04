@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
@@ -7,6 +8,13 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model app\models\Tasks */
 /* @var $form yii\widgets\ActiveForm */
+
+$startFloorList = [];
+for ($i = 1; $i <= Yii::$app->params['building']['floors'] ; $i++) {
+    $startFloorList[$i] = "$i этаж";
+}
+$endFloorList = ArrayHelper::merge($startFloorList, ['-100' => 'Первых этаж', '-110' => 'Последний этаж']);
+
 ?>
 
 <div class="tasks-form">
@@ -24,11 +32,11 @@ use yii\widgets\Pjax;
     ]); ?>
 
     <div class="form-group col-md-2 col-sm-6 col-xs-12">
-        <?= $form->field($model, 'start_floor')->textInput() ?>
+        <?= $form->field($model, 'start_floor')->dropDownList($startFloorList, ['prompt'=>'Select floor...']) ?>
     </div>
 
     <div class="form-group col-md-2 col-sm-6 col-xs-12">
-        <?= $form->field($model, 'end_floor')->textInput() ?>
+        <?= $form->field($model, 'end_floor')->dropDownList($endFloorList, ['prompt'=>'Select floor...']) ?>
     </div>
 
     <div class="form-group col-md-2 col-sm-6 col-xs-12">
