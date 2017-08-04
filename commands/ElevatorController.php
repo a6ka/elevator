@@ -33,7 +33,7 @@ class ElevatorController extends Controller
         echo "Запуск скрипта...".PHP_EOL;
         $building = new Building(5,4);
         echo "Дом инициализирован...".PHP_EOL;
-        $elevator = new Elevator($building, 1, 1);
+        $elevator = new Elevator($building, 1, 1, 700);
         echo "Лифт инициализирован...".PHP_EOL;
         echo "Загружаю задания...".PHP_EOL;
         echo "--------------------".PHP_EOL;
@@ -54,7 +54,10 @@ class ElevatorController extends Controller
                     $elevator->loading();
                 }
 
-                while (count($elevator->getStopFloorsList())) {
+                while (count($elevator->getStopFloorsList()) || count($elevator->getReverseStopFloorsList())) {
+                    if(!count($elevator->getStopFloorsList())) {
+                        $elevator->changeDirection();
+                    }
                     $list = $elevator->getStopFloorsList();
                     $floor = $list[0];
                     if($elevator->moveTo($floor)) {
@@ -62,6 +65,7 @@ class ElevatorController extends Controller
                         $elevator->loading();
                     }
                 }
+
             }
         }
         while(count($tasks));

@@ -14,8 +14,10 @@ use yii\helpers\ArrayHelper;
  * @property integer $currentDirection
  * @property integer $status_id
  * @property integer $speed
+ * @property integer $maxWeight
  * @property integer $persons_number
  * @property array $stopFloorsList
+ * @property array $reverseStopFloorsList
  *
  * @property Building $building
  */
@@ -27,19 +29,21 @@ class Elevator extends Model implements ElevatorInterface
     public $speed; // m/s
     public $currentDirection;
     public $persons_number = 0;
+    public $maxWeight = 0;
 
     private $building;
-    private $stopFloorsList;
+    private $stopFloorsList = [];
+    private $reverseStopFloorsList = [];
 
 
-    public function __construct(Building $building, int $startFloor, int $speed)
+    public function __construct(Building $building, int $startFloor, int $speed, int $maxWeight = 0)
     {
         parent::__construct();
         $this->building = $building;
         $this->currentHeight = $building->getFloorHeight($startFloor);
         $this->speed = $speed;
+        $this->maxWeight = $maxWeight;
         $this->status_id = 1;
-        $this->stopFloorsList = [];
         $this->elevator_name = $this->generateUniqueRandomString('elevator_name');
 
         $this->saveProperties();
@@ -68,7 +72,9 @@ class Elevator extends Model implements ElevatorInterface
     {
         echo "Поступил вызов лифта с ".$floor." этажа!".PHP_EOL;
         $this->stopFloorsList []= $floor;
-        $this->currentDirection = $direction;
+        if($direction) {
+            $this->currentDirection = $direction;
+        }
         $this->saveProperties();
         return true;
     }
@@ -84,7 +90,16 @@ class Elevator extends Model implements ElevatorInterface
         if(is_int($button)) {
             //validate floor number (between 1 and max floor). If not - ignore the signal
             if($button <= $this->building->floors && $button > 0) {
-                $this->addToStopFloorsList($button);
+                $neededDirection = 1; //Down
+                if($button > $this->getElevatorFloor()) {
+                    $neededDirection = 2; //Up
+                }
+                if($this->currentDirection === $neededDirection) {
+                    $this->addToStopFloorsList($button);
+                } else {
+                    $this->addToReverseStopFloorsList($button);
+                }
+
             }
         }
         return true;
@@ -101,8 +116,10 @@ class Elevator extends Model implements ElevatorInterface
 
         //update elevator status
         if($this->currentHeight < $endHeight) {
+            $this->currentDirection = 2;
             $this->status_id = 2;
         } elseif ($this->currentHeight > $endHeight) {
+            $this->currentDirection = 1;
             $this->status_id = 3;
         }
         $this->saveProperties();
@@ -162,7 +179,7 @@ class Elevator extends Model implements ElevatorInterface
         //update elevator status
         $this->status_id = 4;
 
-        //person out action
+        //persons OUT
         $personsOut = Tasks::find()->where(['status_id' => 2, 'end_floor' => $this->getElevatorFloor()])->all();
         foreach ($personsOut as $personOut) {
             $personOut->status_id = 3;
@@ -171,8 +188,8 @@ class Elevator extends Model implements ElevatorInterface
             echo "Высаживаю пассажира. Количество людей в лифте: ".$this->persons_number.PHP_EOL;
         }
 
-        //person in action
-        $personsIn = Tasks::find()->where(['status_id' => 1, 'direction' => $this->currentDirection,'start_floor' => $this->getElevatorFloor()])->all();
+        //persons IN
+        $personsIn = Tasks::find()->where(['status_id' => 1,'start_floor' => $this->getElevatorFloor()])->all();
         foreach ($personsIn as $personIn) {
             $personIn->status_id = 2;
             $personIn->save();
@@ -272,6 +289,44 @@ class Elevator extends Model implements ElevatorInterface
         } else {
             sort($this->stopFloorsList,SORT_NUMERIC);
         }
+        return true;
+    }
+
+    /**
+     * @param int $floor
+     * @return bool
+     */
+    private function addToReverseStopFloorsList(int $floor)
+    {
+        if(!ArrayHelper::isIn($floor, $this->reverseStopFloorsList)) {
+            array_push($this->reverseStopFloorsList, $floor);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getReverseStopFloorsList()
+    {
+        return $this->reverseStopFloorsList;
+    }
+
+    /**
+     * @return bool
+     */
+    public function changeDirection()
+    {
+        $this->stopFloorsList = $this->reverseStopFloorsList;
+        $this->reverseStopFloorsList = [];
+        if($this->currentDirection === 1) {
+            $this->currentDirection = 2;
+        } else {
+            $this->currentDirection = 1;
+        }
+        $this->saveProperties();
+        $this->sortStopFloorsList();
         return true;
     }
 }
