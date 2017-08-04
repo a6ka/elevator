@@ -48,7 +48,7 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-        set_time_limit(0);
+//        set_time_limit(60);
 
         $building = new Building(5,4);
         $elevator = new Elevator($building, 1, 1);
@@ -63,13 +63,19 @@ class SiteController extends Controller
                 $elevator->addCall($firstTask->start_floor, $firstTask->direction);
 
                 //move elevator to first task
-               if($elevator->moveTo($firstTask->start_floor)) {
-                   //on/out persons
-                   $elevator->loading();
-               }
+                if($elevator->moveTo($firstTask->start_floor)) {
+                    //on/out persons
+                    $elevator->loading();
+                }
 
-
-                var_dump($elevator->getStopFloorsList());die;
+                while (count($elevator->getStopFloorsList())) {
+                    $list = $elevator->getStopFloorsList();
+                    $floor = $list[0];
+                    if($elevator->moveTo($floor)) {
+                        //on/out persons
+                        $elevator->loading();
+                    }
+                }
             }
         }
         while(count($tasks));

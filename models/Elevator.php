@@ -105,15 +105,42 @@ class Elevator extends Model implements ElevatorInterface
 
         if((int) $this->currentHeight !== (int) $endHeight) {
             $startHeight = $this->currentHeight;
-            while ($this->currentHeight != $endHeight) {
-                $prevHeight = $this->currentHeight;
-                $this->currentHeight = $startHeight + floor((microtime(true)-$startTime)*$this->speed);
-                if($prevHeight !== $this->currentHeight) {
-                    $this->saveProperties();
+            //move up
+            if($this->status_id === 2) {
+                while ((int)$this->currentHeight !== (int)$endHeight) {
+                    $prevHeight = (int) $this->currentHeight;
+                    $this->currentHeight = $startHeight + floor((microtime(true)-$startTime)*$this->speed);
+                    if( $prevHeight !== (int) $this->currentHeight) {
+                        if($currentFloor = $this->getElevatorFloor()) {
+                            $tasks = Tasks::find()->where(['status_id' => 1, 'start_floor' => $currentFloor])->all();
+                            if(count($tasks)) {
+                                break;
+                            }
+                        }
+                        $this->saveProperties();
+                    }
+                }
+            //move down
+            } else {
+                while ((int)$this->currentHeight !== (int)$endHeight) {
+                    $prevHeight = $this->currentHeight;
+                    $this->currentHeight = $startHeight - floor((microtime(true)-$startTime)*$this->speed);
+                    if((int) $prevHeight !== (int) $this->currentHeight) {
+                        if($currentFloor = $this->getElevatorFloor()) {
+                            $tasks = Tasks::find()->where(['status_id' => 1, 'start_floor' => $currentFloor])->all();
+                            if(count($tasks)) {
+                                break;
+                            }
+                        }
+                        $this->saveProperties();
+                    }
                 }
             }
         }
-        $this->deleteFromStopFloorsList($floor);
+        if($this->currentHeight === $this->building->getFloorHeight($floor)){
+            $this->deleteFromStopFloorsList($floor);
+        }
+
         return true;
     }
 
@@ -127,20 +154,20 @@ class Elevator extends Model implements ElevatorInterface
 
         //person out action
         $personsOut = Tasks::find()->where(['status_id' => 2, 'end_floor' => $this->getElevatorFloor()])->all();
-        foreach ($personsOut as $person) {
-            $person->status_id = 3;
-            $person->save();
+        foreach ($personsOut as $personOut) {
+            $personOut->status_id = 3;
+            $personOut->save();
             $this->persons_number--;
         }
 
         //person in action
-        $personsOut = Tasks::find()->where(['status_id' => 1, 'start_floor' => $this->getElevatorFloor()])->all();
-        foreach ($personsOut as $person) {
-            $person->status_id = 2;
-            $person->save();
+        $personsIn = Tasks::find()->where(['status_id' => 1, 'direction' => $this->currentDirection,'start_floor' => $this->getElevatorFloor()])->all();
+        foreach ($personsIn as $personIn) {
+            $personIn->status_id = 2;
+            $personIn->save();
             $this->persons_number++;
             //add unique person destination to stopFloorsList
-            $this->pressButton($person->end_floor);
+            $this->pressButton($personIn->end_floor);
         }
         //sort stop floors
         $this->sortStopFloorsList();
@@ -191,7 +218,7 @@ class Elevator extends Model implements ElevatorInterface
     public function getElevatorFloor()
     {
         $floor = $this->currentHeight/$this->building->floorHeight + 1;
-        if(is_int($floor)) {
+        if(!($floor - floor($floor))) {
             return (int) $floor;
         }
         return null;
