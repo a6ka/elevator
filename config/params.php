@@ -2,7 +2,7 @@
 
 return [
     'building' => [
-        'floors' => 4,
+        'floors' => 10,
         'floorHeight' => 4,
     ],
     'elevator' => [

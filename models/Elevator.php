@@ -184,7 +184,9 @@ class Elevator extends Model implements ElevatorInterface
                     $this->currentHeight = $startHeight + floor((microtime(true)-$startTime)*$this->speed);
                     if( $prevHeight !== (int) $this->currentHeight) {
                         if($currentFloor = $this->getElevatorFloor()) {
-                            echo "Проезжаю ".$currentFloor." этаж".PHP_EOL;
+                            if($currentFloor !== $floor) {
+                                echo "Проезжаю ".$currentFloor." этаж".PHP_EOL;
+                            }
                             if(!$vip) {
                                 $newTasks = Tasks::find()->where([
                                     'status_id' => 1,
@@ -227,7 +229,9 @@ class Elevator extends Model implements ElevatorInterface
                     $this->currentHeight = $startHeight - floor((microtime(true)-$startTime)*$this->speed);
                     if((int) $prevHeight !== (int) $this->currentHeight) {
                         if($currentFloor = $this->getElevatorFloor()) {
-                            echo "Проезжаю ".$currentFloor." этаж".PHP_EOL;
+                            if($currentFloor !== $floor) {
+                                echo "Проезжаю ".$currentFloor." этаж".PHP_EOL;
+                            }
                             if(!$vip) {
                                 $newTasks = Tasks::find()->where([
                                     'status_id' => 1,
