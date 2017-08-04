@@ -27,7 +27,7 @@ class ElevatorController extends Controller
     public function actionIndex()
     {
         //fix кириллица в консоле (для Windows)
-        shell_exec('chcp 65001');
+//        shell_exec('chcp 65001');
         //Бесконечное время выполнения скрипта
         set_time_limit(0);
 
@@ -50,7 +50,7 @@ class ElevatorController extends Controller
                 $elevator->addCall($firstTask->start_floor, $firstTask->direction);
 
                 //move elevator to first task
-                if($elevator->moveTo($firstTask->start_floor)) {
+                if($elevator->moveTo($firstTask->start_floor, $firstTask->vip)) {
                     //on/out persons
                     $elevator->loading();
                 }
@@ -60,8 +60,7 @@ class ElevatorController extends Controller
                         $elevator->changeDirection();
                     }
                     $list = $elevator->getStopFloorsList();
-                    $floor = $list[0];
-                    if($elevator->moveTo($floor)) {
+                    if($elevator->moveTo($list[0]['neededFloor'], $list[0]['vip'])) {
                         //on/out persons
                         $elevator->loading();
                     }

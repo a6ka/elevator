@@ -1,6 +1,7 @@
 <?php
 
 use app\models\TaskStatuses;
+use rmrevin\yii\fontawesome\FA;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -74,6 +75,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => [0 => 'Unknown', 1 => 'Down', 2 => 'Up'],
             ],
             'weight',
+            [
+                'attribute' => 'vip',
+                'content' => function ($data) {
+                    return $data->vip === 1 ? FA::icon('key') : '';
+                },
+                'contentOptions' => ['class' => 'text-center'],
+                'filter' => [0 => 'No', 1 => 'Yes'],
+            ],
+
             [
                 'attribute' => 'status_id',
                 'content' => function ($data) {

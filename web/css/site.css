@@ -121,3 +121,9 @@ a.desc:after {
 .clearfix:after {
     clear:both;
 }
+.tasks__form-group {
+    padding-top: 32px;
+}
+.tasks__button-group {
+    padding-top: 25px;
+}

@@ -92,9 +92,9 @@ class SiteController extends Controller
                 break;
             case 5:
                 $taskList = [
-                    [1, 4, 0, 1, 0, 0],
-                    [3, 2, 0, 1, 0, 0],
+                    [1, 4, 0, 1, 0, 1],
                     [4, 1, 0, 1, 0, 1],
+                    [3, 1, 0, 1, 0, 0],
                 ];
                 break;
             default:

@@ -47,14 +47,14 @@ $endFloorList = ArrayHelper::merge($startFloorList, ['-100' => 'Первых э�
         <?= $form->field($model, 'weight')->textInput(['value' => 70]) ?>
     </div>
 
-    <div class="form-group col-md-2 col-sm-6 col-xs-12">
+    <div class="form-group col-md-2 col-sm-6 col-xs-12 tasks__form-group">
         <?= $form->field($model, 'vip')->checkbox(['value' => 1]) ?>
     </div>
 
     <?= $form->field($model, 'status_id')->hiddenInput(['value' => 1])->label(false) ?>
 
-    <div class="form-group col-md-2 col-sm-6 col-xs-12">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    <div class="form-group col-md-2 col-sm-6 col-xs-12 tasks__button-group">
+        <?= Html::submitButton('Add task', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
