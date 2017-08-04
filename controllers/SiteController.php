@@ -25,6 +25,7 @@ class SiteController extends Controller
                 $model->direction = 0;
             }
             $model->save();
+            $model = new Tasks();
         }
         $searchModel = new TasksSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -50,11 +51,16 @@ class SiteController extends Controller
     {
 //        set_time_limit(60);
 
+        echo "Запуск скрипта..."."<br/>";
         $building = new Building(5,4);
+        echo "Дом инициализирован..."."<br/>";
         $elevator = new Elevator($building, 1, 1);
+        echo "Лифт инициализирован..."."<br/>";
+        echo "Загружаю задания..."."<br/>";
 
         do{
             $tasks = Tasks::find()->where(['status_id' => 1])->all();
+            echo "Количество людей в ожидании: ".count($tasks)."<br/>";
             if(count($tasks)) {
                 //get first task
                 $firstTask = $tasks[0];

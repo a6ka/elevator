@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
  * @property integer $currentDirection
  * @property integer $status_id
  * @property integer $speed
+ * @property integer $persons_number
  * @property array $stopFloorsList
  *
  * @property Building $building
@@ -63,8 +64,9 @@ class Elevator extends Model implements ElevatorInterface
      * @param null $direction
      * @return bool
      */
-    public function addCall($floor, $direction = null)
+    public function addCall($floor, $direction = 0)
     {
+        echo "Поступил вызов лифта с ".$floor." этажа!"."<br/>";
         $this->stopFloorsList []= $floor;
         $this->currentDirection = $direction;
         $this->saveProperties();
@@ -77,6 +79,7 @@ class Elevator extends Model implements ElevatorInterface
      */
     public function pressButton($button)
     {
+        echo "В кабине нажата кнопка: ".$button."<br/>";
         //if press floor number
         if(is_int($button)) {
             //validate floor number (between 1 and max floor). If not - ignore the signal
@@ -92,6 +95,7 @@ class Elevator extends Model implements ElevatorInterface
      * @return bool
      */
     public function moveTo(int $floor){
+        echo "Принял команду перемещения на ".$floor." этаж"."<br/>";
         $startTime = microtime(true);
         $endHeight = $this->building->getFloorHeight($floor);
 
@@ -112,8 +116,10 @@ class Elevator extends Model implements ElevatorInterface
                     $this->currentHeight = $startHeight + floor((microtime(true)-$startTime)*$this->speed);
                     if( $prevHeight !== (int) $this->currentHeight) {
                         if($currentFloor = $this->getElevatorFloor()) {
+                            echo "Проезжаю ".$currentFloor." этаж"."<br/>";
                             $tasks = Tasks::find()->where(['status_id' => 1, 'start_floor' => $currentFloor])->all();
                             if(count($tasks)) {
+                                echo "На этаже обнаружена жизнь! Подбираю!"."<br/>";
                                 break;
                             }
                         }
@@ -127,8 +133,10 @@ class Elevator extends Model implements ElevatorInterface
                     $this->currentHeight = $startHeight - floor((microtime(true)-$startTime)*$this->speed);
                     if((int) $prevHeight !== (int) $this->currentHeight) {
                         if($currentFloor = $this->getElevatorFloor()) {
+                            echo "Проезжаю ".$currentFloor." этаж"."<br/>";
                             $tasks = Tasks::find()->where(['status_id' => 1, 'start_floor' => $currentFloor])->all();
                             if(count($tasks)) {
+                                echo "На этаже обнаружена жизнь! Подбираю!"."<br/>";
                                 break;
                             }
                         }
@@ -137,7 +145,8 @@ class Elevator extends Model implements ElevatorInterface
                 }
             }
         }
-        if($this->currentHeight === $this->building->getFloorHeight($floor)){
+        if((int)$this->currentHeight === (int)$this->building->getFloorHeight($floor)){
+            echo "Прибыл на ".$floor." этаж"."<br/>";
             $this->deleteFromStopFloorsList($floor);
         }
 
@@ -149,6 +158,7 @@ class Elevator extends Model implements ElevatorInterface
      */
     public function loading()
     {
+        echo "Открыл двери"."<br/>";
         //update elevator status
         $this->status_id = 4;
 
@@ -158,6 +168,7 @@ class Elevator extends Model implements ElevatorInterface
             $personOut->status_id = 3;
             $personOut->save();
             $this->persons_number--;
+            echo "Высаживаю пассажира. Количество людей в лифте: ".$this->persons_number."<br/>";
         }
 
         //person in action
@@ -166,6 +177,7 @@ class Elevator extends Model implements ElevatorInterface
             $personIn->status_id = 2;
             $personIn->save();
             $this->persons_number++;
+            echo "Новый пассажир. Количество людей в лифте: ".$this->persons_number."<br/>";
             //add unique person destination to stopFloorsList
             $this->pressButton($personIn->end_floor);
         }
@@ -173,6 +185,7 @@ class Elevator extends Model implements ElevatorInterface
         $this->sortStopFloorsList();
         $this->saveProperties();
 //        sleep(3);
+        echo "Закрыл двери"."<br/>";
         return true;
     }
 
