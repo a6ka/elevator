@@ -66,7 +66,7 @@ class Elevator extends Model implements ElevatorInterface
      */
     public function addCall($floor, $direction = 0)
     {
-        echo "Поступил вызов лифта с ".$floor." этажа!"."<br/>";
+        echo "Поступил вызов лифта с ".$floor." этажа!".PHP_EOL;
         $this->stopFloorsList []= $floor;
         $this->currentDirection = $direction;
         $this->saveProperties();
@@ -79,7 +79,7 @@ class Elevator extends Model implements ElevatorInterface
      */
     public function pressButton($button)
     {
-        echo "В кабине нажата кнопка: ".$button."<br/>";
+        echo "В кабине нажата кнопка: ".$button.PHP_EOL;
         //if press floor number
         if(is_int($button)) {
             //validate floor number (between 1 and max floor). If not - ignore the signal
@@ -95,7 +95,7 @@ class Elevator extends Model implements ElevatorInterface
      * @return bool
      */
     public function moveTo(int $floor){
-        echo "Принял команду перемещения на ".$floor." этаж"."<br/>";
+        echo "Принял команду перемещения на ".$floor." этаж".PHP_EOL;
         $startTime = microtime(true);
         $endHeight = $this->building->getFloorHeight($floor);
 
@@ -116,10 +116,10 @@ class Elevator extends Model implements ElevatorInterface
                     $this->currentHeight = $startHeight + floor((microtime(true)-$startTime)*$this->speed);
                     if( $prevHeight !== (int) $this->currentHeight) {
                         if($currentFloor = $this->getElevatorFloor()) {
-                            echo "Проезжаю ".$currentFloor." этаж"."<br/>";
+                            echo "Проезжаю ".$currentFloor." этаж".PHP_EOL;
                             $tasks = Tasks::find()->where(['status_id' => 1, 'start_floor' => $currentFloor])->all();
                             if(count($tasks)) {
-                                echo "На этаже обнаружена жизнь! Подбираю!"."<br/>";
+                                echo "На этаже обнаружена жизнь! Подбираю!".PHP_EOL;
                                 break;
                             }
                         }
@@ -133,10 +133,10 @@ class Elevator extends Model implements ElevatorInterface
                     $this->currentHeight = $startHeight - floor((microtime(true)-$startTime)*$this->speed);
                     if((int) $prevHeight !== (int) $this->currentHeight) {
                         if($currentFloor = $this->getElevatorFloor()) {
-                            echo "Проезжаю ".$currentFloor." этаж"."<br/>";
+                            echo "Проезжаю ".$currentFloor." этаж".PHP_EOL;
                             $tasks = Tasks::find()->where(['status_id' => 1, 'start_floor' => $currentFloor])->all();
                             if(count($tasks)) {
-                                echo "На этаже обнаружена жизнь! Подбираю!"."<br/>";
+                                echo "На этаже обнаружена жизнь! Подбираю!".PHP_EOL;
                                 break;
                             }
                         }
@@ -146,7 +146,7 @@ class Elevator extends Model implements ElevatorInterface
             }
         }
         if((int)$this->currentHeight === (int)$this->building->getFloorHeight($floor)){
-            echo "Прибыл на ".$floor." этаж"."<br/>";
+            echo "Прибыл на ".$floor." этаж".PHP_EOL;
             $this->deleteFromStopFloorsList($floor);
         }
 
@@ -158,7 +158,7 @@ class Elevator extends Model implements ElevatorInterface
      */
     public function loading()
     {
-        echo "Открыл двери"."<br/>";
+        echo "Открыл двери".PHP_EOL;
         //update elevator status
         $this->status_id = 4;
 
@@ -168,7 +168,7 @@ class Elevator extends Model implements ElevatorInterface
             $personOut->status_id = 3;
             $personOut->save();
             $this->persons_number--;
-            echo "Высаживаю пассажира. Количество людей в лифте: ".$this->persons_number."<br/>";
+            echo "Высаживаю пассажира. Количество людей в лифте: ".$this->persons_number.PHP_EOL;
         }
 
         //person in action
@@ -177,7 +177,7 @@ class Elevator extends Model implements ElevatorInterface
             $personIn->status_id = 2;
             $personIn->save();
             $this->persons_number++;
-            echo "Новый пассажир. Количество людей в лифте: ".$this->persons_number."<br/>";
+            echo "Новый пассажир. Количество людей в лифте: ".$this->persons_number.PHP_EOL;
             //add unique person destination to stopFloorsList
             $this->pressButton($personIn->end_floor);
         }
@@ -185,7 +185,7 @@ class Elevator extends Model implements ElevatorInterface
         $this->sortStopFloorsList();
         $this->saveProperties();
 //        sleep(3);
-        echo "Закрыл двери"."<br/>";
+        echo "Закрыл двери".PHP_EOL;
         return true;
     }
 

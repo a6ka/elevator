@@ -22,33 +22,53 @@ use yii\console\Controller;
  */
 class ElevatorController extends Controller
 {
-//    public function actionIndex()
-//    {
-//        set_time_limit(0);
-//
-//        //init building and elevator
-//        $building = new Building(5,4);
-//        $elevator = new Elevator($building, 0, 1);
-//
-//        echo date('H:i:s', time())." - ". $elevator->getCurrentHeight() .PHP_EOL;
-//        $elevator->moveTo(2);
-//        echo date('H:i:s', time())." - ". $elevator->getCurrentHeight() .PHP_EOL;
-//    }
+
     public function actionIndex()
     {
+        //fix кириллица в консоле (для Windows)
+        shell_exec('chcp 65001');
         //Бесконечное время выполнения скрипта
         set_time_limit(0);
 
-        //Создаем здание и лифт
+        echo "Запуск скрипта...".PHP_EOL;
         $building = new Building(5,4);
+        echo "Дом инициализирован...".PHP_EOL;
         $elevator = new Elevator($building, 1, 1);
+        echo "Лифт инициализирован...".PHP_EOL;
+        echo "Загружаю задания...".PHP_EOL;
+        echo "--------------------".PHP_EOL;
 
-        $tasks = Tasks::find()->where(['status_id' => 1])->all();
-        while(count($tasks))
-        {
-            //get first task
-            $firstTask = $tasks[0];
+        do{
+            $tasks = Tasks::find()->where(['status_id' => 1])->all();
+            echo "Количество людей в ожидании: ".count($tasks).PHP_EOL;
+            if(count($tasks)) {
+                //get first task
+                $firstTask = $tasks[0];
 
+                //update elevator direction
+                $elevator->addCall($firstTask->start_floor, $firstTask->direction);
+
+                //move elevator to first task
+                if($elevator->moveTo($firstTask->start_floor)) {
+                    //on/out persons
+                    $elevator->loading();
+                }
+
+                while (count($elevator->getStopFloorsList())) {
+                    $list = $elevator->getStopFloorsList();
+                    $floor = $list[0];
+                    if($elevator->moveTo($floor)) {
+                        //on/out persons
+                        $elevator->loading();
+                    }
+                }
+            }
         }
+        while(count($tasks));
+
+        //return the elevator to its original state
+        $elevator->currentDirection = null;
+        $elevator->status_id = 1;
+        $elevator->saveProperties();
     }
 }

@@ -6,8 +6,8 @@ $(document).ready(function () {
     $("#tasks").on("pjax:end", function() {
         setTimeout(function () {
             $.pjax.reload({container:"#tasks"});
-        }, 5000);
+        }, 1000);
     });
 
-    // $.pjax.reload({container:"#tasks"});
+    $.pjax.reload({container:"#tasks"});
 });

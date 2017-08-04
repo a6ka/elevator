@@ -49,7 +49,7 @@ class SiteController extends Controller
 
     public function actionTest()
     {
-//        set_time_limit(60);
+        set_time_limit(0);
 
         echo "Запуск скрипта..."."<br/>";
         $building = new Building(5,4);
@@ -57,6 +57,7 @@ class SiteController extends Controller
         $elevator = new Elevator($building, 1, 1);
         echo "Лифт инициализирован..."."<br/>";
         echo "Загружаю задания..."."<br/>";
+        echo "--------------------"."<br/>";
 
         do{
             $tasks = Tasks::find()->where(['status_id' => 1])->all();
